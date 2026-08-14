@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0912">
+  <meta name="description" content="Compte à rebours des prochains épisodes de Re:ZERO">
+
+  <title>Re:ZERO — Compte à rebours</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+      color: white;
+
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          #352c52 0%,
+          #171321 35%,
+          #09080e 75%
+        );
+
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+
+      background:
+        radial-gradient(
+          circle at 20% 80%,
+          rgba(112, 91, 190, 0.12),
+          transparent 35%
+        ),
+        radial-gradient(
+          circle at 80% 30%,
+          rgba(140, 90, 190, 0.10),
+          transparent 35%
+        );
+    }
+
+    .container {
+      width: min(900px, 100%);
+      text-align: center;
+    }
+
+    .brand {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 5px;
+      color: #b9a8ff;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(38px, 7vw, 76px);
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: -2px;
+    }
+
+    .subtitle {
+      margin: 15px 0 35px;
+      color: #aaa5b8;
+      font-size: clamp(14px, 2vw, 17px);
+    }
+
+    .timer {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .unit {
+      padding: 25px 10px;
+      border-radius: 22px;
+
+      background: rgba(255, 255, 255, 0.055);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+
+      box-shadow:
+        0 15px 50px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+    }
+
+    .number {
+      font-size: clamp(38px, 8vw, 72px);
+      font-weight: 800;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -2px;
+    }
+
+    .label {
+      margin-top: 10px;
+      color: #8e899d;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .release {
+      margin-top: 25px;
+      color: #aaa5b8;
+      font-size: 14px;
+    }
+
+    .timezone {
+      margin-top: 8px;
+      color: #706b7c;
+      font-size: 12px;
+    }
+
+    .status {
+      margin-top: 30px;
+      min-height: 20px;
+      color: #817b90;
+      font-size: 13px;
+    }
+
+    .progress {
+      width: 100%;
+      height: 4px;
+      margin-top: 18px;
+
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: #8874e8;
+      transition: width 1s linear;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 16px;
+      }
+
+      .timer {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .unit {
+        padding: 22px 8px;
+        border-radius: 18px;
+      }
+
+      h1 {
+        letter-spacing: -1px;
+      }
+    }
+
+    @media (max-width: 350px) {
+      .number {
+        font-size: 32px;
+      }
+
+      .label {
+        font-size: 9px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="container">
+
+    <div class="brand">Re:ZERO</div>
+
+    <h1 id="episodeTitle">
+      Épisode 12
+    </h1>
+
+    <div class="subtitle">
+      Compte à rebours jusqu'au prochain épisode
+    </div>
+
+    <section class="timer">
+
+      <div class="unit">
+        <div class="number" id="days">00</div>
+        <div class="label">Jours</div>
+      </div>
+
+      <div class="unit">
+        <div class="number" id="hours">00</div>
+        <div class="label">Heures</div>
+      </div>
+
+      <div class="unit">
+        <div class="number" id="minutes">00</div>
+        <div class="label">Minutes</div>
+      </div>
+
+      <div class="unit">
+        <div class="number" id="seconds">00</div>
+        <div class="label">Secondes</div>
+      </div>
+
+    </section>
+
+    <div class="release" id="releaseDate">
+      Chargement...
+    </div>
+
+    <div class="timezone" id="timezone">
+      Détection du fuseau horaire...
+    </div>
+
+    <div class="progress">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="status" id="status">
+      Le compte à rebours se met à jour chaque seconde.
+    </div>
+
+  </main>
+
+<script>
+
+  /*
+   * ============================================================
+   * CALENDRIER DES ÉPISODES
+   * ============================================================
+   *
+   * IMPORTANT :
+   * Les dates sont enregistrées en UTC.
+   *
+   * Exemple :
+   * "2026-08-12T14:00:00Z"
+   *
+   * Le navigateur convertit ensuite automatiquement cette date
+   * dans le fuseau horaire du téléphone ou du PC.
+   *
+   * Il n'est donc PAS nécessaire de mettre +01:00 ou +02:00.
+   */
+
+  const episodes = [
+
+    {
+      number: 12,
+      date: "2026-08-12T14:00:00Z"
+    },
+
+    {
+      number: 13,
+      date: "2026-08-19T14:00:00Z"
+    },
+
+    {
+      number: 14,
+      date: "2026-08-26T14:00:00Z"
+    },
+
+    {
+      number: 15,
+      date: "2026-09-02T14:00:00Z"
+    },
+
+    {
+      number: 16,
+      date: "2026-09-09T14:00:00Z"
+    },
+
+    {
+      number: 17,
+      date: "2026-09-16T14:00:00Z"
+    },
+
+    {
+      number: 18,
+      date: "2026-09-23T14:00:00Z"
+    },
+
+    {
+      number: 19,
+      date: "2026-09-30T14:00:00Z"
+    }
+
+  ];
+
+
+  /*
+   * ============================================================
+   * ÉLÉMENTS HTML
+   * ============================================================
+   */
+
+  const episodeTitle = document.getElementById("episodeTitle");
+
+  const daysElement = document.getElementById("days");
+  const hoursElement = document.getElementById("hours");
+  const minutesElement = document.getElementById("minutes");
+  const secondsElement = document.getElementById("seconds");
+
+  const releaseDateElement = document.getElementById("releaseDate");
+  const timezoneElement = document.getElementById("timezone");
+  const statusElement = document.getElementById("status");
+
+  const progressBar = document.getElementById("progressBar");
+
+
+  /*
+   * ============================================================
+   * OUTILS
+   * ============================================================
+   */
+
+  function pad(number) {
+    return String(number).padStart(2, "0");
+  }
+
+
+  function getCurrentEpisode() {
+
+    const now = Date.now();
+
+    return episodes.find(
+      episode => new Date(episode.date).getTime() > now
+    );
+
+  }
+
+
+  /*
+   * ============================================================
+   * FORMATAGE DE LA DATE LOCALE
+   * ============================================================
+   */
+
+  function formatLocalDate(date) {
+
+    return new Intl.DateTimeFormat(
+      navigator.language || "fr-FR",
+      {
+        dateStyle: "full",
+        timeStyle: "short"
+      }
+    ).format(date);
+
+  }
+
+
+  /*
+   * ============================================================
+   * MISE À JOUR
+   * ============================================================
+   */
+
+  function updateCountdown() {
+
+    const now = Date.now();
+
+    const episode = getCurrentEpisode();
+
+
+    /*
+     * Tous les épisodes sont sortis.
+     */
+
+    if (!episode) {
+
+      episodeTitle.textContent = "Saison terminée";
+
+      releaseDateElement.textContent =
+        "Tous les épisodes programmés sont sortis.";
+
+      timezoneElement.textContent =
+        "Fuseau : " +
+        Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+      daysElement.textContent = "00";
+      hoursElement.textContent = "00";
+      minutesElement.textContent = "00";
+      secondsElement.textContent = "00";
+
+      progressBar.style.width = "100%";
+
+      statusElement.textContent =
+        "Ajoute les prochaines dates dans le calendrier du site.";
+
+      return;
+
+    }
+
+
+    const target = new Date(episode.date);
+
+    const targetTime = target.getTime();
+
+    const difference = Math.max(
+      0,
+      targetTime - now
+    );
+
+
+    /*
+     * Conversion en secondes.
+     */
+
+    const totalSeconds =
+      Math.floor(difference / 1000);
+
+
+    const days =
+      Math.floor(totalSeconds / 86400);
+
+    const hours =
+      Math.floor(
+        (totalSeconds % 86400) / 3600
+      );
+
+    const minutes =
+      Math.floor(
+        (totalSeconds % 3600) / 60
+      );
+
+    const seconds =
+      totalSeconds % 60;
+
+
+    /*
+     * Affichage.
+     */
+
+    episodeTitle.textContent =
+      "Épisode " + episode.number;
+
+    daysElement.textContent =
+      pad(days);
+
+    hoursElement.textContent =
+      pad(hours);
+
+    minutesElement.textContent =
+      pad(minutes);
+
+    secondsElement.textContent =
+      pad(seconds);
+
+
+    /*
+     * Date adaptée automatiquement
+     * au fuseau du téléphone / PC.
+     */
+
+    releaseDateElement.textContent =
+      "Sortie : " + formatLocalDate(target);
+
+
+    /*
+     * Affichage du fuseau utilisé.
+     */
+
+    const timezone =
+      Intl.DateTimeFormat()
+        .resolvedOptions()
+        .timeZone;
+
+    timezoneElement.textContent =
+      "Fuseau horaire : " + timezone;
+
+
+    /*
+     * Texte d'état.
+     */
+
+    statusElement.textContent =
+      "Le site passera automatiquement à l'épisode suivant à sa sortie.";
+
+
+    /*
+     * Barre de progression.
+     *
+     * On calcule la période entre l'épisode précédent
+     * et l'épisode actuel.
+     */
+
+    const index =
+      episodes.indexOf(episode);
+
+    const previousEpisode =
+      episodes[index - 1];
+
+
+    if (previousEpisode) {
+
+      const start =
+        new Date(previousEpisode.date).getTime();
+
+      const total =
+        targetTime - start;
+
+      const elapsed =
+        now - start;
+
+      const percentage =
+        Math.min(
+          100,
+          Math.max(
+            0,
+            (elapsed / total) * 100
+          )
+        );
+
+      progressBar.style.width =
+        percentage + "%";
+
+    } else {
+
+      progressBar.style.width = "0%";
+
+    }
+
+  }
+
+
+  /*
+   * ============================================================
+   * LANCEMENT
+   * ============================================================
+   */
+
+  updateCountdown();
+
+  /*
+   * Mise à jour toutes les secondes.
+   */
+
+  setInterval(
+    updateCountdown,
+    1000
+  );
+
+</script>
+
+</body>
+</html>
