@@ -1,4 +1,5 @@
 {
+  "id": "./",
   "name": "Re:ZERO Countdown",
   "short_name": "Re:ZERO",
   "description": "Compte à rebours des prochains épisodes de Re:ZERO",
@@ -8,5 +9,6 @@
   "orientation": "portrait",
   "background_color": "#09080e",
   "theme_color": "#0b0912",
-  "lang": "fr"
+  "lang": "fr",
+  "categories": ["entertainment"]
 }
